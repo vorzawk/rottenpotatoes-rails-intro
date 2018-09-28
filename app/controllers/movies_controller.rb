@@ -13,7 +13,7 @@ class MoviesController < ApplicationController
   def index
     @movies = Movie.all
     if params.has_key?(:sort_by)
-        @movies = Movie.where("rating = 'G'")
+        @movies = Movie.order("Movie Title")
     end
   end
 

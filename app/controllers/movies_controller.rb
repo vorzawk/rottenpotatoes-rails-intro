@@ -14,7 +14,7 @@ class MoviesController < ApplicationController
     @movies = Movie.all
     if params.has_key?(:sort_by)
         @movies = Movie.where("rating = 'G'")
-    
+    end
   end
 
   def new

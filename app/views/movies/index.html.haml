@@ -7,11 +7,10 @@
     = rating
     = check_box_tag "ratings[#{rating}]", 1, @checked[rating]
   = submit_tag 'Refresh'
-
 %table#movies
   %thead
     %tr
-      %th{class:("hilite" if params[:sort_by] == 'movie_title')}= link_to 'Movie Title', :action => 'index', :sort_by => 'movie_title'
+      %th{class:("hilite" if params[:sort_by] == 'title')}= link_to 'Movie Title', :action => 'index', :sort_by => 'title'
       %th Rating
       %th{class:("hilite" if params[:sort_by] == 'release_date')}= link_to 'Release Date', :action => 'index', :sort_by => 'release_date'
       %th More Info

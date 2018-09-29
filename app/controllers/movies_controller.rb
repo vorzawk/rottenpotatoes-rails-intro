@@ -14,29 +14,43 @@ class MoviesController < ApplicationController
     # The goal here is to execute the database query and provide the Movies
     # ActiveRecord to the view.
     # Initialize the @movies variable with all the movies.
-    @movies = Movie.all
     @all_ratings = Movie.distinct.pluck("rating")
-    # All boxes must be checked intially and user choice must not be forgotten 
-    # while displaying the movie list again. This is done by using the checked
-    # argument in the check_box_tag function in the view.
+    # The requirement is that all boxes must be checked intially, and also the 
+    # previous user choice must not be forgotten.
+    # This is done by using the @checked argument in the check_box_tag function in
+    # the view.
     @checked = {}
+    # All checkboxes must be set initially
     @all_ratings.each {|rating|
         @checked[rating] = true
     }
-    # Overwrite the @movies variable with the appropriate values depending on the 
-    # values in params
-    if params.has_key?(:sort_by) 
-       if params[:sort_by] == 'movie_title'
-        @movies = Movie.order("title")
-       elsif params[:sort_by] == 'release_date'
-        @movies = Movie.order("release_date")
-       end
+
+    if params.has_key?(:sort_by)
+        session[:sort_by] = params[:sort_by]
     end
+
     if params.has_key?(:ratings)
-        ratings = params[:ratings].keys
-        @movies = Movie.where(rating: ratings)
+        # Remember the previous user setting
         @checked = params[:ratings]
+        session[:ratings] = params[:ratings]
     end
+
+    if not params.has_key?(:sort_by) or not params.has_key?(:ratings) 
+        if not session[:sort_by]
+            session[:sort_by] = "title"
+        end
+        if not session[:ratings]
+            session[:ratings] = @checked
+        end
+        # Redirect with all the required parameters so that RESTfulness is preserved.
+        redirect_to :sort_by => session[:sort_by], :ratings => session[:ratings]
+        return
+    else
+    end
+    # The URI is RESTful, so only the params hash is sufficient
+    # to execute the database query.
+    ratings = params[:ratings].keys
+    @movies = Movie.order(params[:sort_by]).where(rating: ratings)
   end
 
   def new
